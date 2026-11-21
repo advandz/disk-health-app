@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 //
 //  Package.swift
 //  Disk Health
@@ -13,7 +13,7 @@ import PackageDescription
 // (IOKit, DiskArbitration, SwiftUI, Charts, UserNotifications).
 let package = Package(
     name: "DiskHealth",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v26)],
     products: [
         .executable(name: "DiskHealth", targets: ["DiskHealth"])
     ],
@@ -36,7 +36,7 @@ let package = Package(
                 .linkedFramework("DiskArbitration"),
             ]
         ),
-        // SwiftUI application (Liquid Glass on macOS 26, material fallback on 14/15).
+        // SwiftUI application (Liquid Glass).
         .executableTarget(
             name: "DiskHealth",
             dependencies: ["DiskHealthCore"],

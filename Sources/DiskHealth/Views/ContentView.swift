@@ -16,13 +16,9 @@ struct ContentView: View {
 
     private var backdropColor: Color { store.selectedEntry?.report.status.color ?? .blue }
 
-    /// In full screen the toolbar is hidden, so the floating sidebar (macOS 26) would touch the top edge
-    /// of the screen. Give it the same 8 pt margin it has on the other sides.
-    private var fullScreenTopMargin: CGFloat {
-        guard isFullScreen else { return 0 }
-        if #available(macOS 26.0, *) { return 8 }
-        return 0
-    }
+    /// In full screen the toolbar is hidden, so the floating sidebar would touch the top edge of the
+    /// screen. Give it the same 8 pt margin it has on the other sides.
+    private var fullScreenTopMargin: CGFloat { isFullScreen ? 8 : 0 }
 
     var body: some View {
         @Bindable var store = store

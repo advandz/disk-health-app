@@ -9,7 +9,7 @@
 # Rebuilds the fallback icon and previews from the Icon Composer document.
 #
 #   Resources/AppIcon.icon   the source of truth (open it in Icon Composer)
-#   Resources/AppIcon.icns   static fallback for macOS 14–15 and builds without Xcode (Default appearance)
+#   Resources/AppIcon.icns   static fallback for builds without Xcode (Default appearance)
 #   Resources/AppIcon.png    256 px light icon shown at the top of the README
 #   build/icon-previews/     a PNG of each appearance, for review
 #

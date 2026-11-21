@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-// Liquid Glass on macOS 26+, with a translucent-material fallback on macOS 14/15.
-// Every glass use in the app goes through these helpers.
+// Liquid Glass. Every glass use in the app goes through these helpers, which also switch to flat,
+// printable surfaces for the PDF report.
 
 extension EnvironmentValues {
     /// True while views are drawn into the PDF report: glass and materials can't be printed, so the
@@ -27,11 +27,7 @@ extension View {
 
     @ViewBuilder
     func glassButton(prominent: Bool = false) -> some View {
-        if #available(macOS 26.0, *) {
-            if prominent { self.buttonStyle(.glassProminent) } else { self.buttonStyle(.glass) }
-        } else {
-            if prominent { self.buttonStyle(.borderedProminent) } else { self.buttonStyle(.bordered) }
-        }
+        if prominent { self.buttonStyle(.glassProminent) } else { self.buttonStyle(.glass) }
     }
 }
 
@@ -47,14 +43,8 @@ private struct GlassSurfaceModifier: ViewModifier {
             content
                 .background(tint?.opacity(0.07) ?? Color.black.opacity(0.025), in: shape)
                 .overlay(shape.strokeBorder((tint ?? .black).opacity(0.18), lineWidth: 0.6))
-        } else if #available(macOS 26.0, *) {
-            content.glassEffect(Glass.regular.tint(tint?.opacity(0.22)).interactive(interactive), in: shape)
         } else {
-            content
-                .background(.regularMaterial, in: shape)
-                .background(tint?.opacity(0.10) ?? .clear, in: shape)
-                .overlay(shape.strokeBorder(.white.opacity(0.18), lineWidth: 0.5))
-                .shadow(color: .black.opacity(0.08), radius: 10, y: 4)
+            content.glassEffect(Glass.regular.tint(tint?.opacity(0.22)).interactive(interactive), in: shape)
         }
     }
 }
@@ -68,40 +58,27 @@ private struct GlassCapsuleModifier: ViewModifier {
             content
                 .background(tint?.opacity(0.12) ?? Color.black.opacity(0.05), in: Capsule())
                 .overlay(Capsule().strokeBorder((tint ?? .black).opacity(0.25), lineWidth: 0.6))
-        } else if #available(macOS 26.0, *) {
-            content.glassEffect(Glass.regular.tint(tint?.opacity(0.35)), in: Capsule())
         } else {
-            content
-                .background(.thinMaterial, in: Capsule())
-                .background(tint?.opacity(0.18) ?? .clear, in: Capsule())
+            content.glassEffect(Glass.regular.tint(tint?.opacity(0.35)), in: Capsule())
         }
     }
 }
 
 extension View {
     /// In full screen the toolbar lives in its own opaque window above the content, which shows as a
-    /// dark strip over the gradient. Hide it until the pointer reaches the top of the screen (macOS 15+).
-    @ViewBuilder
+    /// dark strip over the gradient. Hide it until the pointer reaches the top of the screen.
     func toolbarHidesInFullScreen() -> some View {
-        if #available(macOS 15.0, *) {
-            self.windowToolbarFullScreenVisibility(.onHover)
-        } else {
-            self
-        }
+        windowToolbarFullScreenVisibility(.onHover)
     }
 }
 
-/// Groups neighbouring glass shapes so they blend and morph together (macOS 26).
+/// Groups neighbouring glass shapes so they blend and morph together.
 struct GlassGroup<Content: View>: View {
     var spacing: CGFloat = 16
     @ViewBuilder var content: Content
 
     var body: some View {
-        if #available(macOS 26.0, *) {
-            GlassEffectContainer(spacing: spacing) { content }
-        } else {
-            content
-        }
+        GlassEffectContainer(spacing: spacing) { content }
     }
 }
 

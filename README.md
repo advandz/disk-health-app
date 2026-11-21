@@ -30,7 +30,7 @@
 
 Download the latest `Disk-Health-x.y.z.dmg` from [Releases](https://github.com/advandz/disk-health-app/releases), open it and drag **Disk Health** to **Applications**.
 
-Requires macOS 14 Sonoma or later; the app runs natively on Apple silicon and Intel and uses Liquid Glass on macOS 26. It isn't notarized, so if macOS can't verify it, choose **Open Anyway** in **System Settings → Privacy & Security**.
+Requires macOS 26 Tahoe or later; the app runs natively on Apple silicon and Intel. It isn't notarized, so if macOS can't verify it, choose **Open Anyway** in **System Settings → Privacy & Security**.
 
 Disk Health checks this repository's tags about once a day, and whenever you choose **Disk Health → Check for Updates…**. When there's a newer version it shows the release notes and offers **Install Update**, **Later** or **Skip This Version**. Installing downloads the release's DMG, checks the app inside (bundle ID, version and code signature), swaps it in place and restarts. Automatic checks can be turned off in **Settings → Updates**.
 

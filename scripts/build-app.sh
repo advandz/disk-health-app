@@ -54,8 +54,8 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/$EXECUTABLE"
 
 # App icon. Resources/AppIcon.icon is an Icon Composer document (Liquid Glass, with Default, Dark,
-# Clear and Tinted appearances). Xcode's actool compiles it into Assets.car, which macOS 26 uses.
-# The static AppIcon.icns rendered from it covers macOS 14–15 and builds without Xcode.
+# Clear and Tinted appearances). Xcode's actool compiles it into Assets.car. The static
+# AppIcon.icns rendered from it is the fallback for builds without Xcode.
 cp "$ROOT/Resources/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
 ICON_NAME_KEY=""
 if xcrun --find actool >/dev/null 2>&1; then
@@ -63,7 +63,7 @@ if xcrun --find actool >/dev/null 2>&1; then
   ICON_OBJ="$(mktemp -d)"
   if xcrun actool "$ROOT/Resources/AppIcon.icon" \
       --compile "$APP/Contents/Resources" \
-      --platform macosx --target-device mac --minimum-deployment-target 14.0 \
+      --platform macosx --target-device mac --minimum-deployment-target 26.0 \
       --app-icon AppIcon --include-all-app-icons \
       --output-partial-info-plist "$ICON_OBJ/AppIcon-partial.plist" \
       --errors --warnings >/dev/null; then
@@ -101,7 +101,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>CFBundleVersion</key><string>$BUILD_NUMBER</string>
   <key>CFBundleDevelopmentRegion</key><string>en</string>
   <key>CFBundleLocalizations</key><array>$LOCALIZATIONS</array>
-  <key>LSMinimumSystemVersion</key><string>14.0</string>
+  <key>LSMinimumSystemVersion</key><string>26.0</string>
   <key>LSApplicationCategoryType</key><string>public.app-category.utilities</string>
   <key>NSHighResolutionCapable</key><true/>
   <key>NSSupportsAutomaticGraphicsSwitching</key><true/>
