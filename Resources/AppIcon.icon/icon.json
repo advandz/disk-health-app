@@ -1,0 +1,114 @@
+{
+  "fill": {
+    "linear-gradient": [
+      "display-p3:0.26667,0.81176,0.74902,1.00000",
+      "display-p3:0.11765,0.38824,0.87059,1.00000"
+    ]
+  },
+  "fill-specializations": [
+    {
+      "appearance": "dark",
+      "value": {
+        "linear-gradient": [
+          "display-p3:0.15686,0.20392,0.24706,1.00000",
+          "display-p3:0.03922,0.05490,0.08627,1.00000"
+        ]
+      }
+    }
+  ],
+  "groups": [
+    {
+      "name": "Pulse",
+      "layers": [
+        {
+          "name": "pulse",
+          "image-name": "pulse.svg",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:0.40000,0.94902,0.70588,1.00000"
+              }
+            },
+            {
+              "appearance": "tinted",
+              "value": {
+                "solid": "srgb:1.00000,1.00000,1.00000,1.00000"
+              }
+            }
+          ]
+        }
+      ],
+      "lighting": "individual",
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.5
+      },
+      "specular": true,
+      "translucency": {
+        "enabled": false,
+        "value": 0.5
+      }
+    },
+    {
+      "name": "Drive",
+      "layers": [
+        {
+          "name": "body",
+          "image-name": "body.svg",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:0.23529,0.27059,0.31765,1.00000"
+              }
+            }
+          ],
+          "opacity-specializations": [
+            {
+              "appearance": "tinted",
+              "value": 0.1
+            }
+          ]
+        },
+        {
+          "name": "lid",
+          "image-name": "lid.svg",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:0.38039,0.43529,0.49804,1.00000"
+              }
+            }
+          ],
+          "opacity-specializations": [
+            {
+              "appearance": "tinted",
+              "value": 0.18
+            }
+          ]
+        }
+      ],
+      "blur-material": 0.3,
+      "lighting": "combined",
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.45
+      },
+      "specular": true,
+      "translucency": {
+        "enabled": true,
+        "value": 0.35
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": [
+      "macOS"
+    ]
+  }
+}
