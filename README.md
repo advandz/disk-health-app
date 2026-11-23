@@ -34,6 +34,32 @@ Requires macOS 26 Tahoe or later; the app runs natively on Apple silicon and Int
 
 Disk Health checks this repository's tags about once a day, and whenever you choose **Disk Health → Check for Updates…**. When there's a newer version it shows the release notes and offers **Install Update**, **Later** or **Skip This Version**. Installing downloads the release's DMG, checks the app inside (bundle ID, version and code signature), swaps it in place and restarts. Automatic checks can be turned off in **Settings → Updates**.
 
+## macOS Gatekeeper
+
+Disk Health isn't notarized by Apple, so macOS Gatekeeper may stop it the first time you open it. You may see a message such as:
+
+- “Disk Health” is damaged and can't be opened. You should move it to the Trash.
+- “Disk Health” can't be opened because Apple cannot check it for malicious software.
+- “Disk Health” is not safe to open.
+
+The download isn't corrupt. macOS marks every app downloaded from the internet as quarantined, and Gatekeeper blocks quarantined apps that aren't notarized.
+
+**To open it**
+
+1. Drag **Disk Health** to **Applications**, then open it. When macOS blocks it, click **Done** (not **Move to Trash**).
+2. Open **System Settings → Privacy & Security** and scroll down to **Security**.
+3. Next to the message about Disk Health, click **Open Anyway**, then confirm with your password or Touch ID.
+
+**If it says the app is damaged**
+
+That message has no **Open Anyway** button. Remove the quarantine flag in Terminal, then open the app normally:
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Disk Health.app"
+```
+
+If the app isn't in **Applications**, use its actual path. Only do this for a copy you downloaded from this repository's [Releases](https://github.com/advandz/disk-health-app/releases) page.
+
 ## Use
 
 - **Settings:** **Disk Health → Settings…** (⌘,) or the toolbar's Options menu.
