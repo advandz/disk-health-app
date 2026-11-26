@@ -120,15 +120,11 @@ int32_t DKATAReadSMART(uint32_t service,
 
     uint32_t avail = 0;
 
+    // Read-only: if S.M.A.R.T. is turned off on the drive the read fails, and it is left off. Turning it
+    // on changes the drive's configuration, which is the user's decision, not the monitor's.
     ATASMARTData data;
     memset(&data, 0, sizeof(data));
     IOReturn result = (*ata)->SMARTReadData(ata, &data);
-    if (result != kIOReturnSuccess) {
-        // SMART may be disabled on the drive: enable it and retry once.
-        if ((*ata)->SMARTEnableDisableOperations(ata, true) == kIOReturnSuccess) {
-            result = (*ata)->SMARTReadData(ata, &data);
-        }
-    }
     if (result == kIOReturnSuccess && data512) {
         memcpy(data512, &data, sizeof(data));
         avail |= DKATAHasData;
@@ -192,10 +188,10 @@ int32_t DKATAStartSelfTest(uint32_t service, bool extended)
 
 int DKAuthOpenReadOnly(const char *devicePath)
 {
-    if (devicePath == NULL) return -1;
+    if (devicePath == NULL) return DKAuthOpenLaunchFailed;
 
     int sockets[2];
-    if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) != 0) return -1;
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) != 0) return DKAuthOpenLaunchFailed;
 
     posix_spawn_file_actions_t actions;
     posix_spawn_file_actions_init(&actions);
@@ -221,10 +217,10 @@ int DKAuthOpenReadOnly(const char *devicePath)
 
     if (spawnResult != 0) {
         close(sockets[0]);
-        return -1;
+        return DKAuthOpenLaunchFailed;
     }
 
-    int fd = -1;
+    int fd = DKAuthOpenNoDescriptor;
     char byte = 0;
     struct iovec iov = { .iov_base = &byte, .iov_len = sizeof(byte) };
     union {
@@ -247,7 +243,8 @@ int DKAuthOpenReadOnly(const char *devicePath)
 
     if (received > 0) {
         struct cmsghdr *cmsg = CMSG_FIRSTHDR(&message);
-        if (cmsg && cmsg->cmsg_level == SOL_SOCKET && cmsg->cmsg_type == SCM_RIGHTS) {
+        if (cmsg && cmsg->cmsg_level == SOL_SOCKET && cmsg->cmsg_type == SCM_RIGHTS
+            && cmsg->cmsg_len >= CMSG_LEN(sizeof(int))) {
             memcpy(&fd, CMSG_DATA(cmsg), sizeof(int));
         }
     }

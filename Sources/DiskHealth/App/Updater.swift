@@ -6,6 +6,7 @@
 //
 
 import AppKit
+import DiskHealthCore
 import SwiftUI
 
 // MARK: - Versions
@@ -64,6 +65,8 @@ struct AvailableUpdate {
     let notes: String
     /// The disk image attached to the tag's GitHub release, if there is one.
     let downloadURL: URL?
+    /// Its Ed25519 signature (`<image>.dmg.sig`), attached to the same release.
+    let signatureURL: URL?
     let pageURL: URL
 }
 
@@ -103,10 +106,15 @@ final class Updater: NSObject {
     static let shared = Updater()
     static let repository = "advandz/disk-health-app"
 
+    /// Public half of the release signing key (`scripts/update-signing.swift`). A downloaded disk image
+    /// is installed only if its `.sig` verifies against this key, so a release file swapped on GitHub,
+    /// or re-signed ad hoc, is refused.
+    nonisolated static let signingPublicKey = "tUoX1JHmJqcB3GGcgxLj5ia1PqV+rMQNQlRRVejIqdw="
+
     /// Updating needs the app bundle (not `swift run`), and is off for demo runs and scripted exports.
     static var isAvailable: Bool {
         Bundle.main.bundleIdentifier != nil && !DemoMode.isActive
-            && UserDefaults.standard.string(forKey: "ExportReportPDF") == nil
+            && LaunchArguments.string("ExportReportPDF") == nil
     }
 
     /// Settings keys. Automatic checks are on unless turned off in Settings › Updates.
@@ -121,21 +129,34 @@ final class Updater: NSObject {
     private var installer: UpdateInstaller?
     private var timer: Timer?
 
-    /// The API base URL. A hidden `UpdateFeedURL` default can point it elsewhere for testing.
+    /// The API base URL. For testing, `-UpdateFeedURL http://127.0.0.1:<port>` on the command line
+    /// points it at a local copy of the API. It's read from launch arguments only and must be on this
+    /// Mac, so a value written into the app's settings can't redirect updates.
     private var feedBase: String {
-        UserDefaults.standard.string(forKey: "UpdateFeedURL")
-            ?? "https://api.github.com/repos/\(Self.repository)"
+        if let override = LaunchArguments.string("UpdateFeedURL"), let url = URL(string: override),
+           Self.isLocal(url) {
+            return override
+        }
+        return "https://api.github.com/repos/\(Self.repository)"
+    }
+
+    nonisolated static func isLocal(_ url: URL) -> Bool {
+        ["http", "https"].contains(url.scheme ?? "") && ["127.0.0.1", "localhost", "::1"].contains(url.host ?? "")
     }
 
     // MARK: Scheduling
 
-    /// Checks shortly after launch and then roughly once a day, when enabled.
+    /// Automatic checks (on unless turned off in Settings › Updates): every time the app starts, then
+    /// once a day while it runs (see `UpdateSchedule`). A failed check is retried at the next hourly tick.
     func start() {
         UserDefaults.standard.register(defaults: [Keys.checkAutomatically: true])
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in self?.checkIfDue() }
-        timer = Timer.scheduledTimer(withTimeInterval: 60 * 60, repeats: true) { [weak self] _ in
-            MainActor.assumeIsolated { self?.checkIfDue() }
+        // On startup: always, a moment after launch so the window is up first.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in self?.checkAutomatically(onStartup: true) }
+        // While running: once a day. The hourly tick also catches up after sleep or time offline.
+        timer = Timer.scheduledTimer(withTimeInterval: UpdateSchedule.tick, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.checkAutomatically(onStartup: false) }
         }
+        timer?.tolerance = 60
         NotificationCenter.default.addObserver(
             forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main
         ) { [weak self] _ in
@@ -148,11 +169,13 @@ final class Updater: NSObject {
         }
     }
 
-    private func checkIfDue() {
+    private func checkAutomatically(onStartup: Bool) {
         let defaults = UserDefaults.standard
         guard defaults.bool(forKey: Keys.checkAutomatically) else { return }
-        let last = defaults.double(forKey: Keys.lastCheck)
-        guard Date().timeIntervalSince1970 - last > 24 * 60 * 60 else { return }
+        if !onStartup {
+            let last = defaults.double(forKey: Keys.lastCheck)
+            guard UpdateSchedule.isDue(lastCheck: last > 0 ? Date(timeIntervalSince1970: last) : nil) else { return }
+        }
         check(userInitiated: false)
     }
 
@@ -201,7 +224,11 @@ final class Updater: NSObject {
 
         let encodedTag = newest.tag.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? newest.tag
         let release: GitHubRelease? = try? await get("releases/tags/\(encodedTag)")
-        let dmg = release?.assets.first { $0.name.lowercased().hasSuffix(".dmg") }?.browserDownloadURL
+        let dmgAsset = release?.assets.first { $0.name.lowercased().hasSuffix(".dmg") }
+        let dmg = dmgAsset?.browserDownloadURL
+        let signature = dmgAsset.flatMap { image in
+            release?.assets.first { $0.name.lowercased() == image.name.lowercased() + ".sig" }?.browserDownloadURL
+        }
         let page = release?.htmlURL
             ?? URL(string: "https://github.com/\(Self.repository)/releases/tag/\(encodedTag)")!
 
@@ -210,6 +237,7 @@ final class Updater: NSObject {
             tag: newest.tag,
             notes: release?.body?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "",
             downloadURL: dmg.map(Self.isTrusted) == true ? dmg : nil,
+            signatureURL: signature.map(Self.isTrusted) == true ? signature : nil,
             pageURL: page
         )
     }
@@ -228,8 +256,7 @@ final class Updater: NSObject {
 
     /// Downloads must come over HTTPS (or from this Mac, when testing).
     nonisolated static func isTrusted(_ url: URL) -> Bool {
-        if url.scheme == "https" { return true }
-        return url.scheme == "http" && ["127.0.0.1", "localhost", "::1"].contains(url.host ?? "")
+        url.scheme == "https" || isLocal(url)
     }
 
     // MARK: Prompts
@@ -237,7 +264,8 @@ final class Updater: NSObject {
     /// "Install Update", "Later" or "Skip This Version".
     private func present(_ update: AvailableUpdate) {
         NSApp.activate()
-        let canInstall = update.downloadURL != nil && UpdateInstaller.canReplaceRunningApp
+        // Without a signature there's no way to check the download, so it can only be opened on GitHub.
+        let canInstall = update.downloadURL != nil && update.signatureURL != nil && UpdateInstaller.canReplaceRunningApp
 
         let alert = NSAlert()
         alert.icon = NSApp.applicationIconImage
@@ -449,8 +477,11 @@ final class UpdateInstaller: NSObject {
             let bundleID = Bundle.main.bundleIdentifier ?? ""
             let version = update.version
             let work = workDirectory
+            let signatureURL = update.signatureURL
             Task.detached {
                 do {
+                    // Check the signature before mounting: an unverified disk image is never attached.
+                    try await Self.verifySignature(of: dmg, signatureURL: signatureURL)
                     let staged = try Self.stage(dmg: dmg, work: work, version: version, bundleID: bundleID, target: target)
                     await MainActor.run { self.relaunch(replacing: target, with: staged) }
                 } catch {
@@ -458,6 +489,19 @@ final class UpdateInstaller: NSObject {
                 }
             }
         }
+    }
+
+    /// Checks the downloaded image against its Ed25519 signature and the app's built-in public key.
+    nonisolated private static func verifySignature(of file: URL, signatureURL: URL?) async throws {
+        let refused = UpdateError.invalidDownload(
+            String(localized: "The download's signature doesn't match Disk Health's publisher, so it wasn't installed."))
+        guard let signatureURL, Updater.isTrusted(signatureURL) else { throw refused }
+        let (data, response) = try await URLSession.shared.data(for: URLRequest(url: signatureURL, timeoutInterval: 30))
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+        guard status == 200,
+              let image = try? Data(contentsOf: file, options: .mappedIfSafe),
+              UpdateSignature.isValid(signatureFile: data, for: image, publicKey: Updater.signingPublicKey)
+        else { throw refused }
     }
 
     /// Mounts the image, checks the app inside and copies it next to the

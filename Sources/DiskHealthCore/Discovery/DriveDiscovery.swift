@@ -15,7 +15,16 @@ public enum DriveDiscovery {
     private static let nvmeCapableKey = "NVMe SMART Capable"
     private static let ataCapableKey = "SMART Capable"
 
-    public static func scan() -> [DriveSnapshot] {
+    /// How long an idle hard drive's S.M.A.R.T. data may be reused before the drive is read again.
+    static let idleReuseLimit: TimeInterval = 12 * 3600
+
+    /// Reads every drive.
+    ///
+    /// `previous` holds the last snapshots. A hard drive whose host I/O counters haven't moved since
+    /// its last S.M.A.R.T. read is idle and may be spun down; sending it S.M.A.R.T. commands would
+    /// spin it up again, so its last data is reused for up to `idleReuseLimit`. Pass no snapshots
+    /// to read every drive fresh.
+    public static func scan(reusing previous: [DriveSnapshot] = []) -> [DriveSnapshot] {
         let mounted = VolumeScanner.mountedVolumes()
         var iterator: io_iterator_t = 0
         guard IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching("IOBlockStorageDevice"),
@@ -28,7 +37,7 @@ public enum DriveDiscovery {
             let service = IOIteratorNext(iterator)
             if service == 0 { break }
             defer { IOObjectRelease(service) }
-            if let drive = snapshot(for: service, mounted: mounted), !seenBSD.contains(drive.bsdName) {
+            if let drive = snapshot(for: service, mounted: mounted, previous: previous), !seenBSD.contains(drive.bsdName) {
                 seenBSD.insert(drive.bsdName)
                 drives.append(drive)
             }
@@ -41,7 +50,8 @@ public enum DriveDiscovery {
 
     // MARK: - Per device
 
-    static func snapshot(for service: io_service_t, mounted: [MountedVolume]) -> DriveSnapshot? {
+    static func snapshot(for service: io_service_t, mounted: [MountedVolume],
+                         previous: [DriveSnapshot] = []) -> DriveSnapshot? {
         // Skip optical drives and virtual devices (disk images, RAM disks).
         if IORegistry.conforms(service, "IOCDBlockStorageDevice") { return nil }
         let props = IORegistry.properties(service)
@@ -60,6 +70,7 @@ public enum DriveDiscovery {
 
         // USB bridge / reader information
         var usb: USBInfo?
+        var usbLocationID: Int?
         if let usbDevice = ancestors.first(where: { IORegistry.conforms($0, "IOUSBHostDevice") || IORegistry.conforms($0, "IOUSBDevice") }) {
             let u = IORegistry.properties(usbDevice)
             usb = USBInfo(
@@ -71,6 +82,7 @@ public enum DriveDiscovery {
                 linkSpeedBps: u.uint64("UsbLinkSpeed").map { Double($0) } ?? usbSpeed(fromDeviceSpeed: u.int("Device Speed")),
                 bcdUSB: u.int("bcdUSB")
             )
+            usbLocationID = u.int("locationID")
         }
 
         // SMART-capable service: the device itself or a close ancestor.
@@ -84,13 +96,21 @@ public enum DriveDiscovery {
 
         let smart: SMARTData
         var smartEntryID: UInt64?
+        var capturedAt = Date()
         if let s = nvmeService {
             smart = readNVMe(s)
             if interface == .pcie || interface == .unknown { interface = .nvme }
             smartEntryID = IORegistry.entryID(s)
         } else if let s = ataService {
-            smart = readATA(s)
-            smartEntryID = IORegistry.entryID(s)
+            let entryID = IORegistry.entryID(s)
+            if let idle = reusableIdleSnapshot(entryID: entryID, io: media.statistics, previous: previous) {
+                // Keep the original capture time: the data is the same, so no new history point is added.
+                smart = idle.smart
+                capturedAt = idle.capturedAt
+            } else {
+                smart = readATA(s)
+            }
+            smartEntryID = entryID
         } else if interface == .usb || interface == .sdCard {
             smart = .unavailable(reason: bridgedSMARTUnavailableReason)
         } else {
@@ -142,8 +162,18 @@ public enum DriveDiscovery {
         let displayModel = (model?.isEmpty == false ? model : nil) ?? "\(vendor ?? "Unknown") Drive"
         let name = displayName(model: displayModel, vendor: vendor, kind: kind)
 
-        let identityKey = [displayModel, serial ?? usb?.serialNumber ?? "", serial == nil ? "\(capacity)" : ""]
-            .filter { !$0.isEmpty }.joined(separator: "|")
+        // History is keyed by this identity. Drives with a serial number keep the key they always had.
+        // Without one, model and capacity alone would make identical cards or sticks share history,
+        // so a partition-table UUID (or failing that, the USB port) tells them apart.
+        let identityKey: String
+        if serial != nil || usb?.serialNumber != nil {
+            identityKey = [displayModel, serial ?? usb?.serialNumber ?? "", serial == nil ? "\(capacity)" : ""]
+                .filter { !$0.isEmpty }.joined(separator: "|")
+        } else {
+            let distinguisher = media.uuid.map { "uuid:\($0)" }
+                ?? usbLocationID.map { "usb-location:\(String($0, radix: 16))" } ?? ""
+            identityKey = [displayModel, "\(capacity)", distinguisher].filter { !$0.isEmpty }.joined(separator: "|")
+        }
 
         let volumes = VolumeScanner.volumes(for: media.descendantBSDNames, from: mounted)
 
@@ -170,7 +200,7 @@ public enum DriveDiscovery {
             smart: smart,
             io: media.statistics,
             volumes: volumes,
-            capturedAt: Date(),
+            capturedAt: capturedAt,
             isSample: false,
             smartServiceEntryID: smartEntryID
         )
@@ -183,6 +213,22 @@ public enum DriveDiscovery {
         var props: [String: Any]
         var statistics: IOStatistics?
         var descendantBSDNames: Set<String>
+        /// The disk's partition-table UUID, or its first partition's (GPT disks have them; MBR ones don't).
+        var uuid: String?
+    }
+
+    /// The previous snapshot of an idle hard drive, if its S.M.A.R.T. data can be reused without
+    /// sending the drive any command.
+    static func reusableIdleSnapshot(entryID: UInt64?, io: IOStatistics?, previous: [DriveSnapshot],
+                                     now: Date = Date()) -> DriveSnapshot? {
+        guard let entryID, let io,
+              let last = previous.first(where: { $0.smartServiceEntryID == entryID }),
+              last.medium == .rotational,
+              case let .ata(ata) = last.smart, !ata.selfTestInProgress,   // a self-test does no host I/O
+              let lastIO = last.io, lastIO.totalOperations == io.totalOperations,
+              now.timeIntervalSince(last.capturedAt) < idleReuseLimit
+        else { return nil }
+        return last
     }
 
     /// Device → IOBlockStorageDriver → whole-disk IOMedia.
@@ -199,13 +245,19 @@ public enum DriveDiscovery {
                 IOObjectRetain(m)
                 var names = Set<String>()
                 if let own = mp.string("BSD Name") { names.insert(own) }
+                var firstPartition: (id: Int, uuid: String)?
                 let descendants = IORegistry.descendants(m)
                 for d in descendants where IORegistry.conforms(d, "IOMedia") {
                     if let n = IORegistry.property(d, "BSD Name") as? String { names.insert(n) }
+                    if let uuid = IORegistry.property(d, "UUID") as? String,
+                       let partition = (IORegistry.property(d, "Partition ID") as? NSNumber)?.intValue,
+                       partition < (firstPartition?.id ?? .max) {
+                        firstPartition = (partition, uuid)
+                    }
                 }
                 IORegistry.release(descendants)
                 found = MediaInfo(entry: m, props: mp, statistics: statistics(driverProps.dict("Statistics")),
-                                  descendantBSDNames: names)
+                                  descendantBSDNames: names, uuid: mp.string("UUID") ?? firstPartition?.uuid)
             }
             IORegistry.release(mediaChildren)
             if let found { return found }
@@ -271,7 +323,7 @@ public enum DriveDiscovery {
         let has = { (flag: Int) in availability & UInt32(flag) != 0 }
         guard result == 0 || has(DKATAHasStatus) else {
             let code = String(format: "0x%08x", UInt32(bitPattern: result))
-            return .unavailable(reason: String(localized: "S.M.A.R.T. data could not be read (IOReturn \(code))."))
+            return .unavailable(reason: String(localized: "S.M.A.R.T. data could not be read (IOReturn \(code)). S.M.A.R.T. may be turned off on this drive; Disk Health leaves that setting unchanged."))
         }
         return .ata(ATAParser.parse(
             data: has(DKATAHasData) ? data : [],

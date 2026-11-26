@@ -76,7 +76,7 @@ struct ContentView: View {
         }
         ToolbarItem(placement: .primaryAction) {
             Button {
-                Task { await store.refresh() }
+                Task { await store.refresh(force: true) }
             } label: {
                 if store.isRefreshing {
                     ProgressView().controlSize(.small)

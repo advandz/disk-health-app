@@ -177,16 +177,16 @@
     },
     "%@ failed (%lld)." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ failed (%2$lld)."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ ist fehlgeschlagen (%2$lld)."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ failed (%2$lld)."
           }
         },
         "es" : {
@@ -213,6 +213,12 @@
             "value" : "%1$@が失敗しました（%2$lld）。"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 실행에 실패했습니다(%2$lld)."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -223,12 +229,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ 失败（%2$lld）。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ 실행에 실패했습니다(%2$lld)."
           }
         }
       }
@@ -5689,16 +5689,16 @@
     },
     "A new version of Disk Health is available" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A new version of Disk Health is available"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Eine neue Version von Disk Health ist verfügbar"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A new version of Disk Health is available"
           }
         },
         "es" : {
@@ -5725,6 +5725,12 @@
             "value" : "Disk Healthの新しいバージョンがあります"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Health의 새로운 버전을 사용할 수 있습니다"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5735,12 +5741,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "有新版本的 Disk Health 可用"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Health의 새로운 버전을 사용할 수 있습니다"
           }
         }
       }
@@ -8590,16 +8590,16 @@
     },
     "Cancel" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abbrechen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
           }
         },
         "es" : {
@@ -8626,6 +8626,12 @@
             "value" : "キャンセル"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8636,12 +8642,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "取消"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "취소"
           }
         }
       }
@@ -8822,16 +8822,16 @@
     },
     "Check Now" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check Now"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Jetzt suchen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check Now"
           }
         },
         "es" : {
@@ -8858,6 +8858,12 @@
             "value" : "今すぐ確認"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금 확인"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8869,27 +8875,21 @@
             "state" : "translated",
             "value" : "立即检查"
           }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금 확인"
-          }
         }
       }
     },
     "Check for Updates…" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check for Updates…"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nach Updates suchen …"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for Updates…"
           }
         },
         "es" : {
@@ -8916,6 +8916,12 @@
             "value" : "アップデートを確認…"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업데이트 확인…"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8927,27 +8933,21 @@
             "state" : "translated",
             "value" : "检查更新…"
           }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "업데이트 확인…"
-          }
         }
       }
     },
     "Check for updates automatically" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check for updates automatically"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Automatisch nach Updates suchen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for updates automatically"
           }
         },
         "es" : {
@@ -8974,6 +8974,12 @@
             "value" : "アップデートを自動的に確認"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자동으로 업데이트 확인"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8984,12 +8990,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自动检查更新"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "자동으로 업데이트 확인"
           }
         }
       }
@@ -9054,16 +9054,16 @@
     },
     "Close" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schließen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
           }
         },
         "es" : {
@@ -9090,6 +9090,12 @@
             "value" : "閉じる"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "닫기"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9100,12 +9106,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "关闭"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "닫기"
           }
         }
       }
@@ -9460,16 +9460,16 @@
     },
     "Couldn't check for updates" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't check for updates"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suche nach Updates fehlgeschlagen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't check for updates"
           }
         },
         "es" : {
@@ -9496,6 +9496,12 @@
             "value" : "アップデートを確認できませんでした"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업데이트를 확인할 수 없음"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9507,27 +9513,21 @@
             "state" : "translated",
             "value" : "无法检查更新"
           }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "업데이트를 확인할 수 없음"
-          }
         }
       }
     },
     "Couldn't install the update" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't install the update"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Update konnte nicht installiert werden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't install the update"
           }
         },
         "es" : {
@@ -9554,6 +9554,12 @@
             "value" : "アップデートをインストールできませんでした"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업데이트를 설치할 수 없음"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9565,27 +9571,21 @@
             "state" : "translated",
             "value" : "无法安装更新"
           }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "업데이트를 설치할 수 없음"
-          }
         }
       }
     },
     "Couldn't start the installer: %@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't start the installer: %@"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Das Installationsprogramm konnte nicht gestartet werden: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't start the installer: %@"
           }
         },
         "es" : {
@@ -9612,6 +9612,12 @@
             "value" : "インストーラを起動できませんでした: %@"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설치 프로그램을 시작할 수 없음: %@"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9622,12 +9628,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法启动安装器：%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "설치 프로그램을 시작할 수 없음: %@"
           }
         }
       }
@@ -10680,16 +10680,16 @@
     },
     "Disk Health %@ is available. You have %@." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Health %1$@ is available. You have %2$@."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disk Health %1$@ ist verfügbar. Du hast Version %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Health %1$@ is available. You have %2$@."
           }
         },
         "es" : {
@@ -10716,6 +10716,12 @@
             "value" : "Disk Health %1$@が利用可能です。現在のバージョンは%2$@です。"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Health %1$@ 버전을 사용할 수 있습니다. 현재 버전은 %2$@입니다."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10727,27 +10733,21 @@
             "state" : "translated",
             "value" : "Disk Health %1$@ 现已推出。你的版本为 %2$@。"
           }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Health %1$@ 버전을 사용할 수 있습니다. 현재 버전은 %2$@입니다."
-          }
         }
       }
     },
     "Disk Health %@ is available. You have %@. Would you like to install it now? Disk Health will restart when it's done." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Health %1$@ is available. You have %2$@. Would you like to install it now? Disk Health will restart when it's done."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disk Health %1$@ ist verfügbar. Du hast Version %2$@. Möchtest du das Update jetzt installieren? Disk Health wird danach neu gestartet."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Health %1$@ is available. You have %2$@. Would you like to install it now? Disk Health will restart when it's done."
           }
         },
         "es" : {
@@ -10774,6 +10774,12 @@
             "value" : "Disk Health %1$@が利用可能です。現在のバージョンは%2$@です。今すぐインストールしますか？完了するとDisk Healthが再起動します。"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Health %1$@ 버전을 사용할 수 있습니다. 현재 버전은 %2$@입니다. 지금 설치하시겠습니까? 설치가 끝나면 Disk Health가 재시작됩니다."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10785,27 +10791,21 @@
             "state" : "translated",
             "value" : "Disk Health %1$@ 现已推出。你的版本为 %2$@。要现在安装吗？安装完成后 Disk Health 将会重新启动。"
           }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Health %1$@ 버전을 사용할 수 있습니다. 현재 버전은 %2$@입니다. 지금 설치하시겠습니까? 설치가 끝나면 Disk Health가 재시작됩니다."
-          }
         }
       }
     },
     "Disk Health %@ is the newest version available." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Health %@ is the newest version available."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disk Health %@ ist die neueste verfügbare Version."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Health %@ is the newest version available."
           }
         },
         "es" : {
@@ -10832,6 +10832,12 @@
             "value" : "Disk Health %@は利用可能な最新バージョンです。"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Health %@ 버전이 최신 버전입니다."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10842,12 +10848,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disk Health %@ 是目前最新的版本。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Health %@ 버전이 최신 버전입니다."
           }
         }
       }
@@ -11144,16 +11144,16 @@
     },
     "Downloading Disk Health %@…" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Downloading Disk Health %@…"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disk Health %@ wird geladen …"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloading Disk Health %@…"
           }
         },
         "es" : {
@@ -11180,6 +11180,12 @@
             "value" : "Disk Health %@をダウンロード中…"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Health %@ 다운로드 중…"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11190,12 +11196,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在下载 Disk Health %@…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Health %@ 다운로드 중…"
           }
         }
       }
@@ -13758,16 +13758,16 @@
     },
     "GitHub responded with an error (HTTP %lld)." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitHub responded with an error (HTTP %lld)."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "GitHub hat mit einem Fehler geantwortet (HTTP %lld)."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub responded with an error (HTTP %lld)."
           }
         },
         "es" : {
@@ -13794,6 +13794,12 @@
             "value" : "GitHubからエラーが返されました（HTTP %lld）。"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub에서 오류를 반환했습니다(HTTP %lld)."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13804,12 +13810,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "GitHub 返回了错误（HTTP %lld）。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitHub에서 오류를 반환했습니다(HTTP %lld)."
           }
         }
       }
@@ -15790,16 +15790,16 @@
     },
     "Install Update" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Install Update"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Update installieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Install Update"
           }
         },
         "es" : {
@@ -15826,6 +15826,12 @@
             "value" : "アップデートをインストール"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업데이트 설치"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15837,27 +15843,21 @@
             "state" : "translated",
             "value" : "安装更新"
           }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "업데이트 설치"
-          }
         }
       }
     },
     "Installing Disk Health %@…" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Installing Disk Health %@…"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disk Health %@ wird installiert …"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installing Disk Health %@…"
           }
         },
         "es" : {
@@ -15884,6 +15884,12 @@
             "value" : "Disk Health %@をインストール中…"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Health %@ 설치 중…"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15894,12 +15900,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在安装 Disk Health %@…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Health %@ 설치 중…"
           }
         }
       }
@@ -16313,16 +16313,16 @@
     },
     "Last checked %@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last checked %@"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zuletzt geprüft: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last checked %@"
           }
         },
         "es" : {
@@ -16349,6 +16349,12 @@
             "value" : "最終確認: %@"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마지막 확인: %@"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16359,12 +16365,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "上次检查：%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "마지막 확인: %@"
           }
         }
       }
@@ -16951,16 +16951,16 @@
     },
     "Later" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Later"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Später"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Later"
           }
         },
         "es" : {
@@ -16987,6 +16987,12 @@
             "value" : "あとで"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나중에"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16997,12 +17003,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "稍后"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "나중에"
           }
         }
       }
@@ -20853,16 +20853,16 @@
     },
     "Not checked yet" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not checked yet"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Noch nicht geprüft"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not checked yet"
           }
         },
         "es" : {
@@ -20889,6 +20889,12 @@
             "value" : "未確認"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 확인하지 않음"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20899,12 +20905,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "尚未检查"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "아직 확인하지 않음"
           }
         }
       }
@@ -21782,16 +21782,16 @@
     },
     "Open GitHub" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open GitHub"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "GitHub öffnen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open GitHub"
           }
         },
         "es" : {
@@ -21818,6 +21818,12 @@
             "value" : "GitHubを開く"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub 열기"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21828,12 +21834,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "打开 GitHub"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitHub 열기"
           }
         }
       }
@@ -24624,64 +24624,6 @@
         }
       }
     },
-    "Read access to the device was not authorized." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lesezugriff auf das Gerät wurde nicht autorisiert."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Read access to the device was not authorized."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se autorizó el acceso de lectura al dispositivo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’accès en lecture à l’appareil n’a pas été autorisé."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’accesso in lettura al dispositivo non è stato autorizzato."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "デバイスへの読み取りアクセスが許可されませんでした。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "기기에 대한 읽기 접근이 승인되지 않았습니다."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O acesso de leitura ao dispositivo não foi autorizado."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未获授权读取此设备。"
-          }
-        }
-      }
-    },
     "Read errors" : {
       "localizations" : {
         "de" : {
@@ -26367,16 +26309,16 @@
     },
     "Restarting Disk Health…" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Restarting Disk Health…"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disk Health wird neu gestartet …"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restarting Disk Health…"
           }
         },
         "es" : {
@@ -26403,6 +26345,12 @@
             "value" : "Disk Healthを再起動中…"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Health 재시작 중…"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26413,12 +26361,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在重新启动 Disk Health…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Health 재시작 중…"
           }
         }
       }
@@ -27003,60 +26945,60 @@
         }
       }
     },
-    "S.M.A.R.T. data could not be read (IOReturn %@)." : {
+    "S.M.A.R.T. data could not be read (IOReturn %@). S.M.A.R.T. may be turned off on this drive; Disk Health leaves that setting unchanged." : {
       "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "S.M.A.R.T.-Daten konnten nicht gelesen werden (IOReturn %@)."
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "S.M.A.R.T. data could not be read (IOReturn %@)."
+            "value" : "S.M.A.R.T. data could not be read (IOReturn %@). S.M.A.R.T. may be turned off on this drive; Disk Health leaves that setting unchanged."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S.M.A.R.T.-Daten konnten nicht gelesen werden (IOReturn %@). Möglicherweise ist S.M.A.R.T. auf diesem Laufwerk deaktiviert; Disk Health ändert diese Einstellung nicht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudieron leer los datos S.M.A.R.T. (IOReturn %@)."
+            "value" : "No se pudieron leer los datos S.M.A.R.T. (IOReturn %@). Puede que S.M.A.R.T. esté desactivado en esta unidad; Disk Health no cambia ese ajuste."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de lire les données S.M.A.R.T. (IOReturn %@)."
+            "value" : "Impossible de lire les données S.M.A.R.T. (IOReturn %@). S.M.A.R.T. est peut-être désactivé sur ce disque ; Disk Health ne modifie pas ce réglage."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossibile leggere i dati S.M.A.R.T. (IOReturn %@)."
+            "value" : "Impossibile leggere i dati S.M.A.R.T. (IOReturn %@). S.M.A.R.T. potrebbe essere disattivato su questa unità; Disk Health non modifica questa impostazione."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "S.M.A.R.T. データを読み取れませんでした（IOReturn %@）。"
+            "value" : "S.M.A.R.T. データを読み取れませんでした（IOReturn %@）。このドライブでは S.M.A.R.T. がオフになっている可能性があります。Disk Health はこの設定を変更しません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "S.M.A.R.T. 데이터를 읽을 수 없습니다(IOReturn %@)."
+            "value" : "S.M.A.R.T. 데이터를 읽을 수 없습니다(IOReturn %@). 이 드라이브에서 S.M.A.R.T.가 꺼져 있을 수 있습니다. Disk Health는 이 설정을 변경하지 않습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível ler os dados S.M.A.R.T. (IOReturn %@)."
+            "value" : "Não foi possível ler os dados S.M.A.R.T. (IOReturn %@). O S.M.A.R.T. pode estar desativado nesta unidade; o Disk Health não altera essa configuração."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法读取 S.M.A.R.T. 数据（IOReturn %@）。"
+            "value" : "无法读取 S.M.A.R.T. 数据（IOReturn %@）。此驱动器可能已关闭 S.M.A.R.T.；Disk Health 不会更改此设置。"
           }
         }
       }
@@ -29036,16 +28978,16 @@
     },
     "Skip This Version" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip This Version"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Diese Version überspringen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip This Version"
           }
         },
         "es" : {
@@ -29072,6 +29014,12 @@
             "value" : "このバージョンをスキップ"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 버전 건너뛰기"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29082,12 +29030,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "跳过此版本"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 버전 건너뛰기"
           }
         }
       }
@@ -31137,76 +31079,76 @@
         }
       }
     },
-    "The device could not be opened for reading." : {
+    "The download's signature doesn't match Disk Health's publisher, so it wasn't installed." : {
       "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Gerät konnte nicht zum Lesen geöffnet werden."
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The device could not be opened for reading."
+            "value" : "The download's signature doesn't match Disk Health's publisher, so it wasn't installed."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Signatur des Downloads stimmt nicht mit dem Herausgeber von Disk Health überein, daher wurde er nicht installiert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo abrir el dispositivo para lectura."
+            "value" : "La firma de la descarga no coincide con la del editor de Disk Health, así que no se ha instalado."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’ouvrir l’appareil en lecture."
+            "value" : "La signature du téléchargement ne correspond pas à l’éditeur de Disk Health ; il n’a donc pas été installé."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossibile aprire il dispositivo in lettura."
+            "value" : "La firma del download non corrisponde all’editore di Disk Health, quindi non è stato installato."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "デバイスを読み取り用に開けませんでした。"
+            "value" : "ダウンロードの署名が Disk Health の発行元と一致しないため、インストールしませんでした。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "기기를 읽기용으로 열 수 없습니다."
+            "value" : "다운로드한 파일의 서명이 Disk Health 게시자와 일치하지 않아 설치하지 않았습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível abrir o dispositivo para leitura."
+            "value" : "A assinatura do download não corresponde à do editor do Disk Health, por isso ele não foi instalado."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法打开设备进行读取。"
+            "value" : "下载内容的签名与 Disk Health 发布者不符，因此未安装。"
           }
         }
       }
     },
     "The downloaded app is version %@, not %@." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The downloaded app is version %1$@, not %2$@."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Die geladene App hat Version %1$@, nicht %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The downloaded app is version %1$@, not %2$@."
           }
         },
         "es" : {
@@ -31233,6 +31175,12 @@
             "value" : "ダウンロードしたAppのバージョンは%1$@で、%2$@ではありません。"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다운로드한 앱은 %2$@ 버전이 아니라 %1$@ 버전입니다."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31244,27 +31192,21 @@
             "state" : "translated",
             "value" : "下载的 App 版本为 %1$@，而不是 %2$@。"
           }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다운로드한 앱은 %2$@ 버전이 아니라 %1$@ 버전입니다."
-          }
         }
       }
     },
     "The downloaded app's code signature isn't valid." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The downloaded app's code signature isn't valid."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Die Codesignatur der geladenen App ist ungültig."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The downloaded app's code signature isn't valid."
           }
         },
         "es" : {
@@ -31291,6 +31233,12 @@
             "value" : "ダウンロードしたAppのコード署名が無効です。"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다운로드한 앱의 코드 서명이 유효하지 않습니다."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31302,27 +31250,21 @@
             "state" : "translated",
             "value" : "下载的 App 的代码签名无效。"
           }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다운로드한 앱의 코드 서명이 유효하지 않습니다."
-          }
         }
       }
     },
     "The downloaded disk image doesn't contain Disk Health." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The downloaded disk image doesn't contain Disk Health."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Das geladene Image enthält Disk Health nicht."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The downloaded disk image doesn't contain Disk Health."
           }
         },
         "es" : {
@@ -31349,6 +31291,12 @@
             "value" : "ダウンロードしたディスクイメージにDisk Healthが含まれていません。"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다운로드한 디스크 이미지에 Disk Health가 없습니다."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31360,11 +31308,63 @@
             "state" : "translated",
             "value" : "下载的磁盘映像不包含 Disk Health。"
           }
+        }
+      }
+    },
+    "The drive couldn't be opened for reading. Authorization was cancelled, or the drive is busy." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The drive couldn't be opened for reading. Authorization was cancelled, or the drive is busy."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Laufwerk konnte nicht zum Lesen geöffnet werden. Die Autorisierung wurde abgebrochen oder das Laufwerk ist belegt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo abrir la unidad para lectura. Se canceló la autorización o la unidad está ocupada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’ouvrir le disque en lecture. L’autorisation a été annulée ou le disque est occupé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile aprire l’unità in lettura. L’autorizzazione è stata annullata oppure l’unità è occupata."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドライブを読み取り用に開けませんでした。認証がキャンセルされたか、ドライブが使用中です。"
+          }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다운로드한 디스크 이미지에 Disk Health가 없습니다."
+            "value" : "드라이브를 읽기용으로 열 수 없습니다. 인증이 취소되었거나 드라이브가 사용 중입니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível abrir a unidade para leitura. A autorização foi cancelada ou a unidade está ocupada."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法打开驱动器进行读取。授权已取消，或驱动器正忙。"
           }
         }
       }
@@ -31803,6 +31803,64 @@
         }
       }
     },
+    "The drive is no longer connected." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The drive is no longer connected."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Laufwerk ist nicht mehr angeschlossen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La unidad ya no está conectada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le disque n’est plus connecté."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’unità non è più collegata."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドライブはもう接続されていません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "드라이브가 더 이상 연결되어 있지 않습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A unidade não está mais conectada."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "驱动器已不再连接。"
+          }
+        }
+      }
+    },
     "The drive recorded command errors in its SMART error log." : {
       "localizations" : {
         "de" : {
@@ -32093,6 +32151,64 @@
         }
       }
     },
+    "The drive was disconnected during the test, so no result was saved." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The drive was disconnected during the test, so no result was saved."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Laufwerk wurde während des Tests getrennt, daher wurde kein Ergebnis gespeichert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La unidad se desconectó durante la prueba, así que no se guardó ningún resultado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le disque a été déconnecté pendant le test ; aucun résultat n’a donc été enregistré."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’unità è stata scollegata durante il test, quindi non è stato salvato alcun risultato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テスト中にドライブが切断されたため、結果は保存されませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트 중에 드라이브 연결이 끊어져 결과를 저장하지 않았습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A unidade foi desconectada durante o teste, por isso nenhum resultado foi salvo."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "测试期间驱动器已断开连接，因此未保存结果。"
+          }
+        }
+      }
+    },
     "The drive's built-in diagnostic found a problem." : {
       "localizations" : {
         "de" : {
@@ -32379,6 +32495,180 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "表面读取测试（%1$@）在 %3$lld 个采样区域中有 %2$lld 个无法读取。"
+          }
+        }
+      }
+    },
+    "The system's authorization helper (authopen) couldn't be started." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The system's authorization helper (authopen) couldn't be started."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Autorisierungsprogramm des Systems (authopen) konnte nicht gestartet werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo iniciar el asistente de autorización del sistema (authopen)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de lancer l’assistant d’autorisation du système (authopen)."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile avviare l’assistente di autorizzazione del sistema (authopen)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システムの認証ヘルパー（authopen）を起動できませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 인증 도우미(authopen)를 시작할 수 없습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível iniciar o assistente de autorização do sistema (authopen)."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法启动系统的授权助手（authopen）。"
+          }
+        }
+      }
+    },
+    "The test was stopped before it finished and found no problems, so the previous result is kept." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The test was stopped before it finished and found no problems, so the previous result is kept."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Test wurde vor dem Ende gestoppt und hat keine Probleme gefunden, daher bleibt das vorherige Ergebnis erhalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La prueba se detuvo antes de terminar y no encontró problemas, así que se conserva el resultado anterior."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le test a été arrêté avant la fin sans trouver de problème ; le résultat précédent est donc conservé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il test è stato interrotto prima della fine senza trovare problemi, quindi resta il risultato precedente."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テストは完了前に停止され、問題は見つからなかったため、前回の結果をそのまま残します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트가 끝나기 전에 중지되었고 문제가 발견되지 않아 이전 결과를 유지합니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O teste foi interrompido antes de terminar e não encontrou problemas, por isso o resultado anterior foi mantido."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "测试在完成前已停止且未发现问题，因此保留之前的结果。"
+          }
+        }
+      }
+    },
+    "The test was stopped too early to give a result." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The test was stopped too early to give a result."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Test wurde zu früh gestoppt, um ein Ergebnis zu liefern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La prueba se detuvo demasiado pronto para dar un resultado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le test a été arrêté trop tôt pour donner un résultat."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il test è stato interrotto troppo presto per dare un risultato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テストの停止が早すぎたため、結果を出せませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트가 너무 일찍 중지되어 결과를 낼 수 없습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O teste foi interrompido cedo demais para dar um resultado."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "测试停止得太早，无法得出结果。"
           }
         }
       }
@@ -34881,13 +35171,13 @@
     },
     "Updates" : {
       "localizations" : {
-        "en" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Updates"
           }
         },
-        "de" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Updates"
@@ -34917,6 +35207,12 @@
             "value" : "アップデート"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업데이트"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34928,27 +35224,21 @@
             "state" : "translated",
             "value" : "更新"
           }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "업데이트"
-          }
         }
       }
     },
     "Updating Disk Health" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Updating Disk Health"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disk Health wird aktualisiert"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updating Disk Health"
           }
         },
         "es" : {
@@ -34975,6 +35265,12 @@
             "value" : "Disk Healthをアップデート中"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk Health 업데이트 중"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34985,12 +35281,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在更新 Disk Health"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disk Health 업데이트 중"
           }
         }
       }
@@ -35693,16 +35983,16 @@
     },
     "View Release" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "View Release"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Release ansehen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Release"
           }
         },
         "es" : {
@@ -35729,6 +36019,12 @@
             "value" : "リリースを表示"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "릴리스 보기"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35739,12 +36035,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "查看版本"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "릴리스 보기"
           }
         }
       }
@@ -36798,16 +37088,16 @@
     },
     "You can download Disk Health %@ from GitHub instead." : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You can download Disk Health %@ from GitHub instead."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Du kannst Disk Health %@ stattdessen von GitHub laden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can download Disk Health %@ from GitHub instead."
           }
         },
         "es" : {
@@ -36834,6 +37124,12 @@
             "value" : "代わりにGitHubからDisk Health %@をダウンロードできます。"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대신 GitHub에서 Disk Health %@ 버전을 다운로드할 수 있습니다."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36845,27 +37141,21 @@
             "state" : "translated",
             "value" : "你可以改从 GitHub 下载 Disk Health %@。"
           }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대신 GitHub에서 Disk Health %@ 버전을 다운로드할 수 있습니다."
-          }
         }
       }
     },
     "You're up to date" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You're up to date"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Du bist auf dem neuesten Stand"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're up to date"
           }
         },
         "es" : {
@@ -36892,6 +37182,12 @@
             "value" : "最新の状態です"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최신 상태입니다"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36902,12 +37198,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已是最新版本"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "최신 상태입니다"
           }
         }
       }
@@ -37557,16 +37847,16 @@
     },
     "unknown" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "unknown"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "unbekannt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "unknown"
           }
         },
         "es" : {
@@ -37593,6 +37883,12 @@
             "value" : "不明"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알 수 없음"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -37603,12 +37899,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未知"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "알 수 없음"
           }
         }
       }

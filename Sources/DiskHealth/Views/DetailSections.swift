@@ -344,8 +344,11 @@ struct SurfaceScanSection: View {
                                 .foregroundStyle(errors > 0 ? HealthStatus.failing.color : .secondary)
                         }
                     case let .failed(message):
-                        Label(message, systemImage: "lock.trianglebadge.exclamationmark")
+                        Label(message, systemImage: "exclamationmark.triangle")
                             .foregroundStyle(HealthStatus.degraded.color)
+                    case let .discarded(message):
+                        Label(message, systemImage: "info.circle")
+                            .foregroundStyle(.secondary)
                     case .finished:
                         EmptyView()
                     }

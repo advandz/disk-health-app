@@ -130,6 +130,23 @@ hdiutil create -volname "$APP_NAME $VERSION" -srcfolder "$STAGE" -fs HFS+ -forma
 hdiutil verify "$DMG" >/dev/null
 echo "✓ Packed: $DMG"
 
+# Update signature: installed copies only install a release whose .sig matches the public key built
+# into the app (Updater.signingPublicKey). Attach the .sig to the release next to the DMG.
+rm -f "$DMG.sig"
+if swift "$ROOT/scripts/update-signing.swift" sign "$DMG" >/dev/null 2>&1; then
+  # Check it exactly as installed copies will, with the public key compiled into this build. A
+  # mismatch (say, a regenerated key) would ship a release that no installed copy can install.
+  PUBLIC_KEY="$(sed -n 's/.*signingPublicKey = "\([^"]*\)".*/\1/p' "$ROOT/Sources/DiskHealth/App/Updater.swift")"
+  if ! swift "$ROOT/scripts/update-signing.swift" verify "$DMG" "$PUBLIC_KEY" >/dev/null; then
+    rm -f "$DMG.sig"
+    echo "✗ The signing key doesn't match Updater.signingPublicKey; the DMG was left unsigned." >&2
+    exit 1
+  fi
+  echo "✓ Signed and verified: $DMG.sig"
+else
+  echo "▸ Not signed: no update signing key (scripts/update-signing.swift). Installed copies won't install this DMG automatically."
+fi
+
 if [[ "${1:-}" == "--open" ]]; then
   open "$APP"
 fi

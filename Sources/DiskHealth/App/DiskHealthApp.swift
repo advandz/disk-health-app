@@ -41,7 +41,7 @@ struct DiskHealthApp: App {
                     .disabled(store.entries.isEmpty)
             }
             CommandGroup(after: .toolbar) {
-                Button("Refresh Drives") { Task { await store.refresh() } }
+                Button("Refresh Drives") { Task { await store.refresh(force: true) } }
                     .keyboardShortcut("r", modifiers: .command)
                 Toggle("Show Sample Drives", isOn: Binding(get: { store.showSamples }, set: { store.showSamples = $0 }))
                     .keyboardShortcut("d", modifiers: [.command, .shift])

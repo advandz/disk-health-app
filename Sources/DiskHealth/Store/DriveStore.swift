@@ -27,6 +27,8 @@ final class DriveStore {
         case authorizing
         case running(completed: Int, total: Int, errors: Int, slow: Int, mbps: Double)
         case finished
+        /// Ended without changing the saved result (e.g. stopped early); the message says why.
+        case discarded(String)
         case failed(String)
     }
 
@@ -68,6 +70,7 @@ final class DriveStore {
     @ObservationIgnored private var watcher: DiskWatcher?
     @ObservationIgnored private var timerTask: Task<Void, Never>?
     @ObservationIgnored private var refreshQueued = false
+    @ObservationIgnored private var queuedRefreshIsForced = false
     @ObservationIgnored private var started = false
     @ObservationIgnored private let notifier = Notifier()
 
@@ -104,16 +107,20 @@ final class DriveStore {
     }
 
     /// Scripting: `-ExportReportPDF <path>` writes a report for every listed drive once the first scan
-    /// finishes; `-ExportReportDrive <name or id>` limits it to matching drives.
+    /// finishes, then quits; `-ExportReportDrive <name or id>` limits it to matching drives. Read from
+    /// launch arguments only, so a value saved in the app's settings can't make every launch quit.
     private func exportFromLaunchArguments() {
-        let defaults = UserDefaults.standard
-        guard let path = defaults.string(forKey: "ExportReportPDF"), !path.isEmpty else { return }
+        guard let path = LaunchArguments.string("ExportReportPDF"), !path.isEmpty else { return }
+        defer { NSApp.terminate(nil) }   // also on failure, so `open -W` scripts don't wait forever
         var targets = entries
-        if let filter = defaults.string(forKey: "ExportReportDrive"), !filter.isEmpty {
+        if let filter = LaunchArguments.string("ExportReportDrive"), !filter.isEmpty {
             targets = targets.filter { $0.id == filter || $0.snapshot.name.localizedCaseInsensitiveContains(filter) }
         }
-        guard !targets.isEmpty else { return }
-        let unit = TemperatureUnit(rawValue: defaults.string(forKey: "temperatureUnit") ?? "") ?? .celsius
+        guard !targets.isEmpty else {
+            NSLog("Disk Health: no drive matches the report filter; nothing exported")
+            return
+        }
+        let unit = TemperatureUnit(rawValue: UserDefaults.standard.string(forKey: "temperatureUnit") ?? "") ?? .celsius
         let url = URL(fileURLWithPath: (path as NSString).expandingTildeInPath)
         do {
             let start = Date()
@@ -138,9 +145,13 @@ final class DriveStore {
         }
     }
 
-    func refresh() async {
+    /// Re-reads every drive. Timer and hot-plug refreshes may reuse an idle hard drive's last
+    /// S.M.A.R.T. data instead of waking it (see `DriveDiscovery.scan(reusing:)`); `force` reads
+    /// everything fresh, for when the user asks for a refresh.
+    func refresh(force: Bool = false) async {
         if isRefreshing {
             refreshQueued = true
+            queuedRefreshIsForced = queuedRefreshIsForced || force
             return
         }
         isRefreshing = true
@@ -150,9 +161,10 @@ final class DriveStore {
         let demo = DemoMode.isActive
         let includeSamples = showSamples || demo
         let store = historyStore
+        let previous = force ? [] : realEntries.map(\.snapshot)
         let fresh = await Task.detached(priority: .userInitiated) { () -> [Entry] in
             var result: [Entry] = []
-            for snapshot in demo ? [] : DriveDiscovery.scan() {
+            for snapshot in demo ? [] : DriveDiscovery.scan(reusing: previous) {
                 let past = store.history(for: snapshot.id)
                 let report = HealthAnalyzer.analyze(snapshot, history: past)
                 var updated = past
@@ -183,8 +195,10 @@ final class DriveStore {
         if !demo { notifyIfWorse() }
 
         if refreshQueued {
+            let forced = queuedRefreshIsForced
             refreshQueued = false
-            Task { await refresh() }
+            queuedRefreshIsForced = false
+            Task { await refresh(force: forced) }
         }
     }
 
@@ -211,15 +225,17 @@ final class DriveStore {
         let flag = CancelFlag()
         scans[id] = ScanState(mode: mode, phase: .authorizing, flag: flag)
         let snapshot = entry.snapshot
+        let bsdName = snapshot.bsdName
 
         Task.detached(priority: .utility) { [self] in
             do {
-                let fd = try SurfaceScanner.openRawDevice(bsdName: snapshot.bsdName)
+                let fd = try SurfaceScanner.openRawDevice(bsdName: bsdName)
                 defer { close(fd) }
-                let result = SurfaceScanner.scan(
+                let result = try SurfaceScanner.scan(
                     fileDescriptor: fd, capacity: snapshot.capacityBytes,
                     blockSize: max(snapshot.logicalBlockSize, snapshot.physicalBlockSize ?? 0), mode: mode,
                     isCancelled: { flag.isCancelled },
+                    isDevicePresent: { SurfaceScanner.deviceExists(bsdName: bsdName) },
                     progress: { p in
                         Task { @MainActor in
                             self.updateScanProgress(id: id, p)
@@ -253,13 +269,19 @@ final class DriveStore {
     func isActive(_ phase: ScanPhase) -> Bool {
         switch phase {
         case .authorizing, .running: return true
-        case .finished, .failed: return false
+        case .finished, .discarded, .failed: return false
         }
     }
 
     private func finishScan(id: String, result: SurfaceScanResult) {
+        let previous = historyStore.history(for: id).lastSurfaceScan
+        guard result.shouldReplace(previous) else {
+            scans[id]?.phase = .discarded(previous != nil && result.completedSamples >= SurfaceScanResult.minimumUsefulSamples
+                ? String(localized: "The test was stopped before it finished and found no problems, so the previous result is kept.")
+                : String(localized: "The test was stopped too early to give a result."))
+            return
+        }
         scans[id]?.phase = .finished
-        guard result.completedSamples >= 32 else { return }
         historyStore.update(id) { $0.lastSurfaceScan = result }
         if let index = entries.firstIndex(where: { $0.id == id }) {
             var entry = entries[index]
@@ -284,7 +306,7 @@ final class DriveStore {
                     : String(localized: "The drive rejected the self-test command.")
             }
             try? await Task.sleep(for: .seconds(3))
-            await self.refresh()
+            await self.refresh(force: true)
         }
     }
 }

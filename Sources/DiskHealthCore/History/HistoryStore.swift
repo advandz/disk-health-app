@@ -159,10 +159,14 @@ public final class HistoryStore: @unchecked Sendable {
         return fresh
     }
 
+    /// Changes a drive's history and saves it. The file is only rewritten when something changed
+    /// (most refreshes add no point, since `append` keeps at most one every few minutes).
     public func update(_ driveID: String, _ body: (inout DriveHistory) -> Void) {
         lock.lock(); defer { lock.unlock() }
         var history = loadLocked(driveID)
+        let before = history
         body(&history)
+        guard history != before else { return }
         cache[driveID] = history
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .secondsSince1970

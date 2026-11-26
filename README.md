@@ -32,7 +32,7 @@ Download the latest `Disk-Health-x.y.z.dmg` from [Releases](https://github.com/a
 
 Requires macOS 26 Tahoe or later; the app runs natively on Apple silicon and Intel. It isn't notarized, so if macOS can't verify it, choose **Open Anyway** in **System Settings → Privacy & Security**.
 
-Disk Health checks this repository's tags about once a day, and whenever you choose **Disk Health → Check for Updates…**. When there's a newer version it shows the release notes and offers **Install Update**, **Later** or **Skip This Version**. Installing downloads the release's DMG, checks the app inside (bundle ID, version and code signature), swaps it in place and restarts. Automatic checks can be turned off in **Settings → Updates**.
+Disk Health checks this repository's releases every time it starts, then once a day while it keeps running, and whenever you choose **Disk Health → Check for Updates…**. A check that fails, for example while offline, is retried an hour later. When there's a newer version it shows the release notes and offers **Install Update**, **Later** or **Skip This Version**. Installing downloads the release's DMG, checks that it's signed with the publisher's key, checks the app inside (bundle ID, version and code signature), swaps it in place and restarts. Automatic checks can be turned off in **Settings → Updates**.
 
 ## macOS Gatekeeper
 
@@ -82,7 +82,7 @@ Then build:
 
 | Command | What it does |
 |:--|:--|
-| `./scripts/build-app.sh` | Builds the universal, ad-hoc signed app into `build/Disk Health.app`, and `build/Disk-Health-<version>.dmg` |
+| `./scripts/build-app.sh` | Builds the universal, ad-hoc signed app into `build/Disk Health.app`, and `build/Disk-Health-<version>.dmg` with its update signature (`.dmg.sig`) |
 | `./scripts/build-app.sh --open` | Also opens it |
 | `swift test` | Runs the parser, analyzer, history and scanner tests |
 | `./scripts/update-strings.sh` | Adds new text from the code to `Resources/Localizable.xcstrings` and lists anything untranslated |
@@ -96,28 +96,32 @@ The icon is an Icon Composer document, `Resources/AppIcon.icon`, with light, dar
 
 ## Release
 
-The updater picks the highest version among the repository's tags, such as `v1.0.1` or `1.0.1`; pre-release tags like `v1.1.0-beta` are ignored. It installs the `.dmg` attached to that tag's GitHub release. To publish a version:
+The updater picks the highest version among the repository's tags, such as `v1.0.1` or `1.0.1`; pre-release tags like `v1.1.0-beta` are ignored. It installs the `.dmg` attached to that tag's GitHub release, but only if the release also has the DMG's signature, `Disk-Health-<version>.dmg.sig`, and it matches the public key built into the app. A release file that was swapped or re-signed is refused.
+
+Signing uses an Ed25519 key that stays on your Mac, in `~/.config/disk-health/update-signing.key`. Create it once with `swift scripts/update-signing.swift generate` and put the public key it prints in `Updater.signingPublicKey`. Back the private key up: releases signed with a different key can't be installed automatically by copies that have the old one.
+
+To publish a version:
 
 1. Set `VERSION` in `scripts/build-app.sh`.
-2. Run `./scripts/build-app.sh`, which also writes `build/Disk-Health-<version>.dmg`.
-3. Commit, then tag and publish the release with the DMG attached. Its notes appear in the update prompt.
+2. Run `./scripts/build-app.sh`, which writes `build/Disk-Health-<version>.dmg` and signs it into `build/Disk-Health-<version>.dmg.sig`.
+3. Commit, then tag and publish the release with both files attached. Its notes appear in the update prompt.
 
    ```bash
    git tag v1.0.1 && git push origin v1.0.1
-   gh release create v1.0.1 build/Disk-Health-1.0.1.dmg --title "Disk Health 1.0.1" --notes "What changed"
+   gh release create v1.0.1 build/Disk-Health-1.0.1.dmg build/Disk-Health-1.0.1.dmg.sig --title "Disk Health 1.0.1" --notes "What changed"
    ```
 
-The app checks without signing in to GitHub, so the repository has to be public. If the newest tag has no release or no DMG, the prompt offers **View Release** instead. Installing in place needs the app in a folder it can write to, such as `/Applications` for an administrator, or `~/Applications`.
+The app checks without signing in to GitHub, so the repository has to be public. If the newest tag has no release, no DMG or no signature, the prompt offers **View Release** instead. Installing in place needs the app in a folder it can write to, such as `/Applications` for an administrator, or `~/Applications`.
 
-To try the updater without publishing anything, point it at a local copy of the API with the hidden `UpdateFeedURL` setting, for example `open "build/Disk Health.app" --args -UpdateFeedURL http://127.0.0.1:8765`. It expects `tags` and `releases/tags/<tag>` in GitHub's format there, and accepts plain HTTP only from this Mac. `VERSION=1.0.1 ./scripts/build-app.sh` builds a newer copy to serve.
+To try the updater without publishing anything, point it at a local copy of the API on the command line, for example `open "build/Disk Health.app" --args -UpdateFeedURL http://127.0.0.1:8765`. It expects `tags` and `releases/tags/<tag>` in GitHub's format there. The setting only works as a launch argument and only for this Mac. `VERSION=1.0.1 ./scripts/build-app.sh` builds and signs a newer copy to serve.
 
 ## Command line
 
-Write a PDF report without opening any window. It's saved after the first drive scan, for every drive, or for those whose name or ID matches `-ExportReportDrive`:
+Write a PDF report from a script. The app opens, saves the report after the first drive scan, and quits, even if nothing matched. The report covers every drive, or those whose name or ID matches `-ExportReportDrive`. `-n` starts a new copy even if Disk Health is already open, and `-W` waits until it's done:
 
 ```bash
-open "build/Disk Health.app" --args -ExportReportPDF ~/Desktop/disk-report.pdf
-open "build/Disk Health.app" --args -ExportReportPDF ~/Desktop/ssd.pdf -ExportReportDrive "APPLE SSD"
+open -n -W "build/Disk Health.app" --args -ExportReportPDF ~/Desktop/disk-report.pdf
+open -n -W "build/Disk Health.app" --args -ExportReportPDF ~/Desktop/ssd.pdf -ExportReportDrive "APPLE SSD"
 ```
 
 `--demo` opens the window with only the sample drives, as in the screenshot above, and saves no history. Add `--light` or `--dark` to pick the appearance, and `-DemoDrive "<name>"` to pick the selected drive:
@@ -153,6 +157,7 @@ How the results are graded:
 ## Good to know
 
 - macOS doesn't pass S.M.A.R.T. commands through USB bridges or card readers without a third-party driver. For those drives the app relies on I/O error counters and the surface read test, and says the result is low confidence. If a SAT SMART driver is installed, it's picked up automatically.
+- Automatic refreshes don't wake a hard drive that's idle: until it's used again, the app shows its last S.M.A.R.T. reading (for up to 12 hours). **Refresh** (⌘R) always reads every drive.
 - The surface read test opens the disk read-only through Apple's `authopen`, which asks for an administrator password. The app never runs as root and never writes to the drive.
 - The app isn't sandboxed, because macOS doesn't allow S.M.A.R.T. access from inside the App Sandbox. That's also why it's distributed here rather than on the Mac App Store.
 - Health history is kept in `~/Library/Application Support/DiskHealth`, and nothing about your drives leaves your Mac. The only network request is the update check to GitHub.

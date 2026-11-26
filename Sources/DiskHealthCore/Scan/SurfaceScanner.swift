@@ -33,16 +33,47 @@ public struct SurfaceScanResult: Codable, Sendable, Hashable {
     public var cancelled: Bool
 
     public var isComplete: Bool { !cancelled && completedSamples >= plannedSamples }
+
+    /// Unreadable or very slow regions were found.
+    public var foundProblems: Bool { readErrors > 0 || verySlowReads > 0 }
+
+    /// Results with fewer samples than this say too little to keep.
+    public static let minimumUsefulSamples = 32
+
+    /// Whether this result should become the drive's last scan in place of `previous`.
+    ///
+    /// A scan that was stopped early and found nothing must not replace an earlier result, or stopping
+    /// a re-run would hide problems that a full scan found. Complete scans, and scans that found
+    /// problems, always replace it.
+    public func shouldReplace(_ previous: SurfaceScanResult?) -> Bool {
+        guard completedSamples >= Self.minimumUsefulSamples else { return false }
+        if isComplete || foundProblems { return true }
+        guard let previous else { return true }
+        return !previous.isComplete && !previous.foundProblems
+    }
 }
 
-public enum SurfaceScanError: LocalizedError {
-    case authorizationDenied
-    case invalidDevice
+public enum SurfaceScanError: LocalizedError, Equatable {
+    /// authopen ran but passed back no descriptor: authorization was cancelled or denied, or the
+    /// device couldn't be opened (for example because it is busy).
+    case notOpened
+    /// The device node doesn't exist (the drive was disconnected).
+    case deviceNotFound
+    /// The drive went away while it was being read.
+    case deviceDisconnected
+    /// authopen couldn't be started.
+    case helperFailed
 
     public var errorDescription: String? {
         switch self {
-        case .authorizationDenied: return String(localized: "Read access to the device was not authorized.")
-        case .invalidDevice: return String(localized: "The device could not be opened for reading.")
+        case .notOpened:
+            return String(localized: "The drive couldn't be opened for reading. Authorization was cancelled, or the drive is busy.")
+        case .deviceNotFound:
+            return String(localized: "The drive is no longer connected.")
+        case .deviceDisconnected:
+            return String(localized: "The drive was disconnected during the test, so no result was saved.")
+        case .helperFailed:
+            return String(localized: "The system's authorization helper (authopen) couldn't be started.")
         }
     }
 }
@@ -74,18 +105,37 @@ public enum SurfaceScanner {
         public var fraction: Double { total > 0 ? Double(completed) / Double(total) : 0 }
     }
 
+    /// The raw device node for a BSD name such as `disk4`.
+    public static func rawDevicePath(bsdName: String) -> String { "/dev/r" + bsdName }
+
+    /// True while the drive's device node exists.
+    public static func deviceExists(bsdName: String) -> Bool {
+        FileManager.default.fileExists(atPath: rawDevicePath(bsdName: bsdName))
+    }
+
     /// Opens `/dev/rdiskN` through authopen (administrator authorization prompt).
     public static func openRawDevice(bsdName: String) throws -> Int32 {
-        let path = "/dev/r" + bsdName
-        let fd = path.withCString { DKAuthOpenReadOnly($0) }
-        guard fd >= 0 else { throw SurfaceScanError.authorizationDenied }
-        return fd
+        guard deviceExists(bsdName: bsdName) else { throw SurfaceScanError.deviceNotFound }
+        let fd = rawDevicePath(bsdName: bsdName).withCString { DKAuthOpenReadOnly($0) }
+        if fd >= 0 { return fd }
+        if fd == Int32(DKAuthOpenLaunchFailed) { throw SurfaceScanError.helperFailed }
+        throw deviceExists(bsdName: bsdName) ? SurfaceScanError.notOpened : SurfaceScanError.deviceNotFound
+    }
+
+    /// errno values that mean the device itself is gone, not that a region is unreadable.
+    static func isDeviceLost(_ code: Int32) -> Bool {
+        [ENXIO, ENODEV, EBADF, ENOENT].contains(code)
     }
 
     /// Runs the scan on an already open descriptor. The descriptor is not closed.
+    ///
+    /// A failed read counts as an unreadable region only while the device is still there. If the
+    /// device disappears (the error says so, or `isDevicePresent` turns false), the scan throws
+    /// `SurfaceScanError.deviceDisconnected` instead, so a disconnect is never recorded as bad media.
     public static func scan(fileDescriptor fd: Int32, capacity: UInt64, blockSize: Int, mode: Mode,
                             isCancelled: @Sendable () -> Bool,
-                            progress: @Sendable (Progress) -> Void) -> SurfaceScanResult {
+                            isDevicePresent: @Sendable () -> Bool = { true },
+                            progress: @Sendable (Progress) -> Void) throws -> SurfaceScanResult {
         let start = Date()
         let align = UInt64(max(512, blockSize))
         let chunk = UInt64(chunkBytes)
@@ -106,8 +156,10 @@ public enum SurfaceScanner {
             if isCancelled() { cancelled = true; break }
             let t0 = DispatchTime.now().uptimeNanoseconds
             let n = pread(fd, buffer, chunkBytes, off_t(offset))
+            let readError = n < 0 ? errno : 0
             let ms = Double(DispatchTime.now().uptimeNanoseconds - t0) / 1_000_000
             if n < 0 {
+                if isDeviceLost(readError) || !isDevicePresent() { throw SurfaceScanError.deviceDisconnected }
                 errors.append(offset)
             } else {
                 bytes += UInt64(n)

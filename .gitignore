@@ -16,3 +16,6 @@ xcuserdata/
 .AppleDouble
 .LSOverride
 ._*
+
+# Signing keys never belong in the repository (the update key lives in ~/.config/disk-health)
+*.key

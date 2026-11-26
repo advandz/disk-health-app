@@ -59,8 +59,15 @@ int32_t DKATAStartSelfTest(uint32_t service, bool extended);
 /// Opens a raw device read-only via /usr/libexec/authopen, which asks the user
 /// for administrator authorization and passes back a file descriptor.
 /// The calling process never runs as root.
-/// @return An open file descriptor, or -1 if authorization failed / was cancelled.
+/// @return An open file descriptor; DKAuthOpenNoDescriptor if authopen ran but passed none back
+///         (authorization cancelled or denied, or the device couldn't be opened); or
+///         DKAuthOpenLaunchFailed if authopen couldn't be started.
 int DKAuthOpenReadOnly(const char *devicePath);
+
+enum {
+    DKAuthOpenNoDescriptor = -1,
+    DKAuthOpenLaunchFailed = -2,
+};
 
 #ifdef __cplusplus
 }

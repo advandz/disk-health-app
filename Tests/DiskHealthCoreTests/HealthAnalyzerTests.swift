@@ -5,6 +5,7 @@
 //  Copyright © 2026 Advandz Technologies, LLC.
 //
 
+import CryptoKit
 import XCTest
 @testable import DiskHealthCore
 
@@ -214,6 +215,25 @@ final class HistoryTests: XCTestCase {
         XCTAssertEqual(reloaded.points.first?.temperatureC, 39)
     }
 
+    func testUnchangedHistoryIsNotRewritten() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let store = HistoryStore(directory: dir)
+        store.update("drive-2") { _ in }
+        XCTAssertTrue(try FileManager.default.contentsOfDirectory(atPath: dir.path).isEmpty,
+                      "A no-op update must not write a file")
+
+        let t0 = Date()
+        store.update("drive-2") { $0.append(HistoryPoint(date: t0, temperatureC: 40)) }
+        let file = try XCTUnwrap(FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil).first)
+        let written = try file.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
+        Thread.sleep(forTimeInterval: 1.1)
+        // Within the sampling interval and with unchanged counters, append keeps nothing new.
+        store.update("drive-2") { $0.append(HistoryPoint(date: t0.addingTimeInterval(60), temperatureC: 41)) }
+        let after = try file.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
+        XCTAssertEqual(written, after, "History that didn't change must not be rewritten")
+    }
+
     func testObservedDutyCycle() {
         let now = Date()
         let h = DriveHistory(driveID: "d", points: [
@@ -233,12 +253,61 @@ final class SurfaceScannerTests: XCTestCase {
         let fd = open(url.path, O_RDONLY)
         XCTAssertGreaterThanOrEqual(fd, 0)
         defer { close(fd) }
-        let result = SurfaceScanner.scan(fileDescriptor: fd, capacity: UInt64(size), blockSize: 4096, mode: .quick,
-                                         isCancelled: { false }, progress: { _ in })
+        let result = try SurfaceScanner.scan(fileDescriptor: fd, capacity: UInt64(size), blockSize: 4096, mode: .quick,
+                                             isCancelled: { false }, progress: { _ in })
         XCTAssertEqual(result.readErrors, 0)
         XCTAssertGreaterThan(result.completedSamples, 0)
         XCTAssertEqual(result.latencyBuckets.reduce(0, +), result.completedSamples)
         XCTAssertTrue(result.isComplete)
+    }
+
+    /// A device that goes away mid-scan must end the scan, not be recorded as unreadable regions.
+    func testLostDeviceThrowsInsteadOfCountingErrors() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("dh-scan-\(UUID().uuidString)")
+        let size = 64 * 1_048_576
+        FileManager.default.createFile(atPath: url.path, contents: Data(count: size))
+        defer { try? FileManager.default.removeItem(at: url) }
+        let fd = open(url.path, O_RDONLY)
+        XCTAssertGreaterThanOrEqual(fd, 0)
+        let reads = Counter()
+        XCTAssertThrowsError(try SurfaceScanner.scan(
+            fileDescriptor: fd, capacity: UInt64(size), blockSize: 4096, mode: .quick,
+            isCancelled: {
+                reads.value += 1
+                if reads.value == 5 { close(fd) }   // the next read fails with EBADF
+                return false
+            },
+            progress: { _ in })) { error in
+            XCTAssertEqual(error as? SurfaceScanError, .deviceDisconnected)
+        }
+    }
+
+    func testDeviceLossErrorsAreToldApartFromMediaErrors() {
+        XCTAssertTrue(SurfaceScanner.isDeviceLost(ENXIO))
+        XCTAssertTrue(SurfaceScanner.isDeviceLost(ENODEV))
+        XCTAssertFalse(SurfaceScanner.isDeviceLost(EIO), "EIO is a media error while the device is present")
+    }
+
+    func testStoppedCleanScanKeepsPreviousResult() {
+        let complete = Self.result(completed: 512, planned: 512, errors: 0)
+        let completeWithErrors = Self.result(completed: 512, planned: 512, errors: 7)
+        let stoppedClean = Self.result(completed: 40, planned: 512, errors: 0, cancelled: true)
+        let stoppedWithErrors = Self.result(completed: 40, planned: 512, errors: 2, cancelled: true)
+        let tooShort = Self.result(completed: 10, planned: 512, errors: 0, cancelled: true)
+
+        XCTAssertFalse(stoppedClean.shouldReplace(completeWithErrors), "Stopping a re-run must not hide errors")
+        XCTAssertFalse(stoppedClean.shouldReplace(complete))
+        XCTAssertTrue(stoppedClean.shouldReplace(nil))
+        XCTAssertTrue(stoppedWithErrors.shouldReplace(complete), "New problems are always kept")
+        XCTAssertTrue(complete.shouldReplace(completeWithErrors), "A complete scan supersedes the last one")
+        XCTAssertFalse(tooShort.shouldReplace(nil))
+    }
+
+    static func result(completed: Int, planned: Int, errors: Int, cancelled: Bool = false) -> SurfaceScanResult {
+        SurfaceScanResult(date: Date(), mode: .quick, plannedSamples: planned, completedSamples: completed,
+                          chunkBytes: SurfaceScanner.chunkBytes, bytesRead: 0, readErrors: errors, errorOffsets: [],
+                          slowReads: 0, verySlowReads: 0, medianLatencyMs: 1, p95LatencyMs: 1, maxLatencyMs: 1,
+                          throughputMBps: 100, latencyBuckets: [], duration: 1, cancelled: cancelled)
     }
 
     func testSampleOffsetsAreAlignedAndCoverBothEnds() {
@@ -248,5 +317,104 @@ final class SurfaceScannerTests: XCTestCase {
         XCTAssertEqual(offsets.last, capacity / 4096 * 4096)
         XCTAssertTrue(offsets.allSatisfy { $0 % 4096 == 0 && $0 <= capacity })
         XCTAssertGreaterThanOrEqual(offsets.count, 512)
+    }
+}
+
+final class IdleDriveTests: XCTestCase {
+    static func hdd(operations: UInt64, capturedAt: Date, selfTest: Int? = nil) -> DriveSnapshot {
+        var io = IOStatistics()
+        io.readOperations = operations
+        let ata = ATAHealthData(attributes: [], overallPassed: true, selfTestStatus: selfTest, errorLogCount: nil,
+                                identify: nil, shortTestMinutes: nil, extendedTestMinutes: nil)
+        return DriveSnapshot(id: "hdd", bsdName: "disk9", name: "HDD", model: "HDD", interface: .sata,
+                             isInternal: false, medium: .rotational, kind: .externalHDD, capacityBytes: 1,
+                             smart: .ata(ata), io: io, capturedAt: capturedAt, smartServiceEntryID: 42)
+    }
+
+    func testIdleHardDriveReusesLastReading() {
+        let now = Date()
+        let last = Self.hdd(operations: 100, capturedAt: now.addingTimeInterval(-600))
+        var io = IOStatistics(); io.readOperations = 100
+        XCTAssertNotNil(DriveDiscovery.reusableIdleSnapshot(entryID: 42, io: io, previous: [last], now: now))
+    }
+
+    func testActiveOrStaleOrTestingDriveIsReadAgain() {
+        let now = Date()
+        var io = IOStatistics(); io.readOperations = 100
+        var busy = IOStatistics(); busy.readOperations = 101
+        let last = Self.hdd(operations: 100, capturedAt: now.addingTimeInterval(-600))
+        XCTAssertNil(DriveDiscovery.reusableIdleSnapshot(entryID: 42, io: busy, previous: [last], now: now),
+                     "Host I/O since the last read means the drive is spinning")
+        XCTAssertNil(DriveDiscovery.reusableIdleSnapshot(entryID: 7, io: io, previous: [last], now: now),
+                     "A different (re-attached) device is read fresh")
+        let old = Self.hdd(operations: 100, capturedAt: now.addingTimeInterval(-13 * 3600))
+        XCTAssertNil(DriveDiscovery.reusableIdleSnapshot(entryID: 42, io: io, previous: [old], now: now))
+        let testing = Self.hdd(operations: 100, capturedAt: now.addingTimeInterval(-600), selfTest: 0xF5)
+        XCTAssertNil(DriveDiscovery.reusableIdleSnapshot(entryID: 42, io: io, previous: [testing], now: now),
+                     "A running self-test does no host I/O but its progress must update")
+        XCTAssertNil(DriveDiscovery.reusableIdleSnapshot(entryID: 42, io: io, previous: [], now: now))
+    }
+}
+
+/// A mutable counter for @Sendable test closures.
+final class Counter: @unchecked Sendable {
+    var value = 0
+}
+
+final class UpdateScheduleTests: XCTestCase {
+    func testChecksOncePerDay() {
+        let now = Date()
+        XCTAssertTrue(UpdateSchedule.isDue(lastCheck: nil, now: now), "Never checked")
+        XCTAssertFalse(UpdateSchedule.isDue(lastCheck: now.addingTimeInterval(-3600), now: now))
+        XCTAssertFalse(UpdateSchedule.isDue(lastCheck: now.addingTimeInterval(-(24 * 3600 - 60)), now: now))
+        XCTAssertTrue(UpdateSchedule.isDue(lastCheck: now.addingTimeInterval(-24 * 3600), now: now))
+        XCTAssertTrue(UpdateSchedule.isDue(lastCheck: now.addingTimeInterval(-3 * 24 * 3600), now: now))
+        XCTAssertTrue(UpdateSchedule.isDue(lastCheck: now.addingTimeInterval(3600), now: now),
+                      "A last check in the future (clock set back) must not block checks")
+    }
+}
+
+final class UpdateSignatureTests: XCTestCase {
+    let key = Curve25519.Signing.PrivateKey()
+    let image = Data((0..<100_000).map { UInt8($0 % 251) })
+
+    var publicKey: String { key.publicKey.rawRepresentation.base64EncodedString() }
+
+    func signatureFile(for data: Data, with signer: Curve25519.Signing.PrivateKey? = nil) throws -> Data {
+        Data(((try (signer ?? key).signature(for: data)).base64EncodedString() + "\n").utf8)
+    }
+
+    func testGenuineImageIsAccepted() throws {
+        XCTAssertTrue(UpdateSignature.isValid(signatureFile: try signatureFile(for: image), for: image, publicKey: publicKey))
+    }
+
+    func testModifiedImageIsRejected() throws {
+        var forged = image
+        forged[50_000] ^= 0x01
+        XCTAssertFalse(UpdateSignature.isValid(signatureFile: try signatureFile(for: image), for: forged, publicKey: publicKey))
+        XCTAssertFalse(UpdateSignature.isValid(signatureFile: try signatureFile(for: image), for: image + Data([0]),
+                                               publicKey: publicKey), "Appended bytes")
+    }
+
+    func testImageSignedWithAnotherKeyIsRejected() throws {
+        let attacker = Curve25519.Signing.PrivateKey()
+        XCTAssertFalse(UpdateSignature.isValid(signatureFile: try signatureFile(for: image, with: attacker), for: image,
+                                               publicKey: publicKey))
+    }
+
+    func testSignatureForAnotherFileIsRejected() throws {
+        let other = Data("another release".utf8)
+        XCTAssertFalse(UpdateSignature.isValid(signatureFile: try signatureFile(for: other), for: image, publicKey: publicKey))
+    }
+
+    func testMalformedSignatureFilesAreRejected() throws {
+        let genuine = try signatureFile(for: image)
+        XCTAssertFalse(UpdateSignature.isValid(signatureFile: Data(), for: image, publicKey: publicKey), "Empty")
+        XCTAssertFalse(UpdateSignature.isValid(signatureFile: Data("not base64!".utf8), for: image, publicKey: publicKey))
+        XCTAssertFalse(UpdateSignature.isValid(signatureFile: Data(Data(repeating: 7, count: 32).base64EncodedString().utf8),
+                                               for: image, publicKey: publicKey), "Wrong length")
+        XCTAssertFalse(UpdateSignature.isValid(signatureFile: genuine + Data(repeating: 0x20, count: 2048), for: image,
+                                               publicKey: publicKey), "Oversized file")
+        XCTAssertFalse(UpdateSignature.isValid(signatureFile: genuine, for: image, publicKey: "not a key"), "Bad public key")
     }
 }
